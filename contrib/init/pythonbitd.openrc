@@ -1,0 +1,92 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/pythonbit/.pythonbit" ]; then
+	PYTHONBITD_DEFAULT_DATADIR="/var/lib/pythonbit/.pythonbit"
+else
+	PYTHONBITD_DEFAULT_DATADIR="/var/lib/pythonbitd"
+fi
+
+PYTHONBITD_CONFIGFILE=${PYTHONBITD_CONFIGFILE:-/etc/pythonbit/pythonbit.conf}
+PYTHONBITD_PIDDIR=${PYTHONBITD_PIDDIR:-/var/run/pythonbitd}
+PYTHONBITD_PIDFILE=${PYTHONBITD_PIDFILE:-${PYTHONBITD_PIDDIR}/pythonbitd.pid}
+PYTHONBITD_DATADIR=${PYTHONBITD_DATADIR:-${PYTHONBITD_DEFAULT_DATADIR}}
+PYTHONBITD_USER=${PYTHONBITD_USER:-${PYTHONBIT_USER:-pythonbit}}
+PYTHONBITD_GROUP=${PYTHONBITD_GROUP:-pythonbit}
+PYTHONBITD_BIN=${PYTHONBITD_BIN:-/usr/bin/pythonbitd}
+PYTHONBITD_NICE=${PYTHONBITD_NICE:-${NICELEVEL:-0}}
+PYTHONBITD_OPTS="${PYTHONBITD_OPTS:-${PYTHONBIT_OPTS}}"
+
+name="Pythonbit Core Daemon"
+description="Pythonbit cryptocurrency P2P network daemon"
+
+command="/usr/bin/pythonbitd"
+command_args="-pid=\"${PYTHONBITD_PIDFILE}\" \
+		-conf=\"${PYTHONBITD_CONFIGFILE}\" \
+		-datadir=\"${PYTHONBITD_DATADIR}\" \
+		-daemon \
+		${PYTHONBITD_OPTS}"
+
+required_files="${PYTHONBITD_CONFIGFILE}"
+start_stop_daemon_args="-u ${PYTHONBITD_USER} \
+			-N ${PYTHONBITD_NICE} -w 2000"
+pidfile="${PYTHONBITD_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${PYTHONBITD_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${PYTHONBITD_USER}:${PYTHONBITD_GROUP}" \
+	"${PYTHONBITD_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${PYTHONBITD_USER}:${PYTHONBITD_GROUP}" \
+	"${PYTHONBITD_PIDDIR}"
+
+	checkpath -f \
+	-o ${PYTHONBITD_USER}:${PYTHONBITD_GROUP} \
+	-m 0660 \
+	${PYTHONBITD_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${PYTHONBITD_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run pythonbitd."
+		eerror "The setting must appear in ${PYTHONBITD_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Pythonbit Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}

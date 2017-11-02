@@ -1,0 +1,3 @@
+debian/manpages/pythonbitd.1
+debian/manpages/pythonbit.conf.5
+debian/manpages/pythonbit-cli.1

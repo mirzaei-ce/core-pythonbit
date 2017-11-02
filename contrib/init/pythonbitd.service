@@ -1,0 +1,22 @@
+[Unit]
+Description=Pythonbit's distributed currency daemon
+After=network.target
+
+[Service]
+User=pythonbit
+Group=pythonbit
+
+Type=forking
+PIDFile=/var/lib/pythonbitd/pythonbitd.pid
+ExecStart=/usr/bin/pythonbitd -daemon -pid=/var/lib/pythonbitd/pythonbitd.pid \
+-conf=/etc/pythonbit/pythonbit.conf -datadir=/var/lib/pythonbitd -disablewallet
+
+Restart=always
+PrivateTmp=true
+TimeoutStopSec=60s
+TimeoutStartSec=2s
+StartLimitInterval=120s
+StartLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+Building Pythonbit
+
+See doc/build-*.md for instructions on building pythonbitd,
+the intended-for-services, no-graphical-interface, reference
+implementation of Pythonbit.

@@ -1,0 +1,33 @@
+# /etc/conf.d/pythonbitd: config file for /etc/init.d/pythonbitd
+
+# Config file location
+#PYTHONBITD_CONFIGFILE="/etc/pythonbit/pythonbit.conf"
+
+# What directory to write pidfile to?  (created and owned by $PYTHONBITD_USER)
+#PYTHONBITD_PIDDIR="/var/run/pythonbitd"
+
+# What filename to give the pidfile
+#PYTHONBITD_PIDFILE="${PYTHONBITD_PIDDIR}/pythonbitd.pid"
+
+# Where to write pythonbitd data (be mindful that the blockchain is large)
+#PYTHONBITD_DATADIR="/var/lib/pythonbitd"
+
+# User and group to own pythonbitd process
+#PYTHONBITD_USER="pythonbit"
+#PYTHONBITD_GROUP="pythonbit"
+
+# Path to pythonbitd executable
+#PYTHONBITD_BIN="/usr/bin/pythonbitd"
+
+# Nice value to run pythonbitd under
+#PYTHONBITD_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+PYTHONBITD_OPTS="-disablewallet"
+
+# The timeout in seconds OpenRC will wait for pythonbitd to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+PYTHONBITD_SIGTERM_TIMEOUT=60

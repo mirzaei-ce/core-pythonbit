@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Pythonbit
+Comment=Pythonbit P2P Cryptocurrency
+Comment[fr]=Pythonbit, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=Pythonbit, eşten eşe kriptografik sanal para birimi
+Exec=pythonbit-qt %u
+Terminal=false
+Type=Application
+Icon=pythonbit128
+MimeType=x-scheme-handler/pythonbit;
+Categories=Office;Finance;

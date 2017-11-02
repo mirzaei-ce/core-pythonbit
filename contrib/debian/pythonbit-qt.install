@@ -1,0 +1,6 @@
+usr/local/bin/pythonbit-qt usr/bin
+share/pixmaps/pythonbit32.xpm usr/share/pixmaps
+share/pixmaps/pythonbit16.xpm usr/share/pixmaps
+share/pixmaps/pythonbit128.png usr/share/pixmaps
+debian/pythonbit-qt.desktop usr/share/applications
+debian/pythonbit-qt.protocol usr/share/kde4/services/
